@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+    height: 100vh;
+    width: 100vw;
+    background-color: #8c0327;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#root{
+    height: 80%;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+figure{
+    filter: drop-shadow(10px 100px 5px #4e0116);
+  transform: translateY(-100px);
+}
+
+.tagItem{
+    transform-origin: 20% 50%;
+}
