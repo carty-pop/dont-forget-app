@@ -13,10 +13,10 @@ function OnBagList({ insideBagContainerRef, itemsInsideBag, handleItemClick}) {
             onClick={(e) => handleItemClick(e)}
             key={index} 
             id={item.id}
-            className="tagItem absolute mx-1 py-2 px-4 border border-neutral/50 text-primary select-none list-none rounded-lg"
+            className="tagItem w-fit mx-1 py-2 px-4 border border-neutral/50 text-primary select-none list-none rounded-lg z-50"	
             >
-              
-              {item.itemName}
+                {item.itemName}
+
             </li>
           ))
         }

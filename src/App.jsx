@@ -6,7 +6,8 @@ import OnBagList from "./components/OnBagList"
 import OutBagList from "./components/OutBagList"
 import Sidebar from "./components/Sidebar"
 
-function App() {
+
+const App = () => {
 
   const [itemsOutsideBag, setItemsOutsideBag] = useState([]);
   const [itemsInsideBag, setItemsInsideBag] = useState([]);
@@ -15,15 +16,6 @@ function App() {
 
   
   useEffect(() => {
-    const storedItemCount = localStorage.getItem('itemsCount');
-    if(JSON.parse(storedItemCount) > 0 ){
-      setItemsCount(JSON.parse(storedItemCount));
-    }
-
-    if(itemsOutsideBag.length === 0 && itemsInsideBag.length === 0) {
-      localStorage.setItem('itemsCount', JSON.stringify(0));
-      setItemsCount(0);
-    }
 
 
     const storedItemsOutsideBag = localStorage.getItem('itemsOutsideBag');
@@ -35,6 +27,17 @@ function App() {
     if (storedItemsInsideBag) {
       setItemsInsideBag(JSON.parse(storedItemsInsideBag));
     }
+
+    const storedItemCount = localStorage.getItem('itemsCount');
+    if(JSON.parse(storedItemCount) > 0 ){
+      setItemsCount(JSON.parse(storedItemCount));
+    }
+
+    if(storedItemsInsideBag?.length === 0 && storedItemsOutsideBag?.length === 0) {
+      localStorage.setItem('itemsCount', JSON.stringify(0));
+      setItemsCount(0);
+    }
+
   }, [])
 
   const randomTopAndLeft = (max, min) => {
@@ -79,6 +82,7 @@ function App() {
   const deleteIconRef = useRef(null);
 
   const deleteItem = () => {
+    
     if(targetElementRef.current) {
       setItemsInsideBag(prevItems => prevItems.filter(item => item.id !== Number(targetElementRef.current.id)));
       setItemsOutsideBag(prevItems => prevItems.filter(item => item.id !== Number(targetElementRef.current.id)));
@@ -104,6 +108,7 @@ function App() {
 
   const outsideBagContainerRef = useRef(null);
   const AABBForOutsideBagContainer = () => {
+
     const rect = outsideBagContainerRef.current.getBoundingClientRect();
     const rect2 = targetElementRef.current?.getBoundingClientRect();
     if(targetElementRef.current !== undefined && rect2 !== undefined) {
@@ -114,10 +119,6 @@ function App() {
     }
   }
 
-
-
-
-
   
   let angle = 0;
   let diff;
@@ -126,6 +127,7 @@ function App() {
   let itemTagWidth;
 
   const handleMouseMove = (event) => {
+    console.log('ok')
     if(targetElementRef.current.style.position !== 'fixed') {
       targetElementRef.current.style.position = 'fixed';
     }
@@ -145,8 +147,8 @@ function App() {
   let previousLeft;
   let previousTop;
   let isHoldingTheItem = false;
-  let originalRotationDeg = 0;
-
+  let originalRotationDeg  = 0;  
+  
   const handleItemClick = (event) => {
     // console.log(itemsOutsideBag);
     targetElementRef.current = event.target;
@@ -160,7 +162,6 @@ function App() {
     itemTagHeight = targetElementRef.current.offsetHeight;
     itemTagWidth = targetElementRef.current.offsetWidth;
     
-    // console.log(previousLeft, previousTop);
     if (isHoldingTheItem) {
       window.removeEventListener('mousemove', handleMouseMove);
       if(AABBForInsideBagContainer()) {
@@ -174,10 +175,11 @@ function App() {
           localStorage.setItem('itemsInsideBag', JSON.stringify([...itemsInsideBag, itemsOutsideBag[itemInArrayId]]));
           
         }
+        targetElementRef.current = null;
         return isHoldingTheItem = false;
       } 
 
-      if(AABBForOutsideBagContainer()) {
+      if(AABBForOutsideBagContainer) {
         console.log('clicked outside bag');
         const holdedItemId = Number(targetElementRef.current.id) ;
         const itemInArrayId = itemsInsideBag.findIndex(item => item.id === holdedItemId);
@@ -187,6 +189,7 @@ function App() {
           localStorage.setItem('itemsInsideBag', JSON.stringify(itemsInsideBag.filter(item => item.id !== holdedItemId)));
           localStorage.setItem('itemsOutsideBag', JSON.stringify([...itemsOutsideBag, itemsInsideBag[itemInArrayId]]));
         }
+        targetElementRef.current = null;
         return isHoldingTheItem = false;
       }
 
@@ -194,12 +197,10 @@ function App() {
       targetElementRef.current.style.left = `${previousLeft}`;
       targetElementRef.current.style.top = `${previousTop}`;
       targetElementRef.current = null;
-        
       return isHoldingTheItem = false;
     }
 
     requestAnimationFrame(handlePendulumEffect);
-
     isHoldingTheItem = true;
     window.addEventListener('mousemove', handleMouseMove);
     previousLeft = targetElementRef.current.style.left;
@@ -216,9 +217,6 @@ function App() {
     requestAnimationFrame(handlePendulumEffect);
   };
   
-
-
-
 
   return (
     <>

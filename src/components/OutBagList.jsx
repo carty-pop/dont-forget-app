@@ -5,13 +5,13 @@ function OutBagList({newItem, setNewItem, itemsOutsideBag, addItem, handleItemCl
 
   
   return (
-    <div ref={outsideBagContainerRef} className=" flex flex-col h-full w-full rounded-lg bg-rose-950/80 p-2 ">
+    <div className=" flex flex-col h-full w-full rounded-lg bg-rose-950/80 p-2">
       <div className="flex flex-row space-x-2">
         <input type="text" value={newItem} onChange={(e) => setNewItem(e.target.value)} placeholder="Add items" className=" basis-4/5 input input-ghost text-base-200 w-full max-w-xs bg-transparent focus:text-base-200" />
         <button onClick={addItem} className="font-bold text-2xl basis-1/5 btn btn-primary">
           <PlusIcon className="w-6 h-6" /></button>
       </div>
-      <div className="flex flex-1">
+      <div ref={outsideBagContainerRef}  className="flex flex-1">
         <ul className="size-full relative">
           {
             itemsOutsideBag.map(({ itemName, style, id }, index) => (
