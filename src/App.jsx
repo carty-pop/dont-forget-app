@@ -20,20 +20,23 @@ const App = () => {
 
     const storedItemsOutsideBag = localStorage.getItem('itemsOutsideBag');
     const storedItemsInsideBag = localStorage.getItem('itemsInsideBag');
+    const storedItemsCount = localStorage.getItem('itemsCount');
+    const parsedItemsOutsideBag = storedItemsOutsideBag && JSON.parse(storedItemsOutsideBag);
+    const parsedItemsInsideBag = storedItemsInsideBag && JSON.parse(storedItemsInsideBag);
     
+    console.log(parsedItemsOutsideBag, storedItemsOutsideBag);
     if (storedItemsOutsideBag) {
-      setItemsOutsideBag(JSON.parse(storedItemsOutsideBag));
+      setItemsOutsideBag(parsedItemsOutsideBag);
     }
     if (storedItemsInsideBag) {
-      setItemsInsideBag(JSON.parse(storedItemsInsideBag));
+      setItemsInsideBag(parsedItemsInsideBag);
     }
 
-    const storedItemCount = localStorage.getItem('itemsCount');
-    if(JSON.parse(storedItemCount) > 0 ){
-      setItemsCount(JSON.parse(storedItemCount));
+    if(JSON.parse(storedItemsCount) > 0 ){
+      setItemsCount(JSON.parse(storedItemsCount));
     }
 
-    if(storedItemsInsideBag?.length === 0 && storedItemsOutsideBag?.length === 0) {
+    if(parsedItemsInsideBag?.length === 0 && parsedItemsOutsideBag?.length === 0){ 
       localStorage.setItem('itemsCount', JSON.stringify(0));
       setItemsCount(0);
     }
@@ -88,6 +91,8 @@ const App = () => {
       setItemsOutsideBag(prevItems => prevItems.filter(item => item.id !== Number(targetElementRef.current.id)));
       localStorage.setItem('itemsOutsideBag', JSON.stringify(itemsOutsideBag.filter(item => item.id !== Number(targetElementRef.current.id))));
       localStorage.setItem('itemsInsideBag', JSON.stringify(itemsInsideBag.filter(item => item.id !== Number(targetElementRef.current.id))));
+      window.removeEventListener('mousemove', handleMouseMove);
+
       return
     }
     console.log('no elemento')
@@ -127,10 +132,14 @@ const App = () => {
   let itemTagWidth;
 
   const handleMouseMove = (event) => {
-    console.log('ok')
+    if(!targetElementRef.current) {
+      console.log('no target');
+      return;
+    }
     if(targetElementRef.current.style.position !== 'fixed') {
       targetElementRef.current.style.position = 'fixed';
     }
+
     const midPointWidth = itemTagWidth * 0.2;
     const midPointHeight = itemTagHeight * 0.5;
     const newX = event.pageX;
@@ -189,11 +198,11 @@ const App = () => {
           localStorage.setItem('itemsInsideBag', JSON.stringify(itemsInsideBag.filter(item => item.id !== holdedItemId)));
           localStorage.setItem('itemsOutsideBag', JSON.stringify([...itemsOutsideBag, itemsInsideBag[itemInArrayId]]));
         }
+        
         targetElementRef.current = null;
         return isHoldingTheItem = false;
       }
 
-      targetElementRef.current.style.position = 'absolute';
       targetElementRef.current.style.left = `${previousLeft}`;
       targetElementRef.current.style.top = `${previousTop}`;
       targetElementRef.current = null;
